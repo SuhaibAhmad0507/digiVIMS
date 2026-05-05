@@ -7,7 +7,7 @@
 ## Project Overview
 The **Digital Voter Information & Management System (VIMS)** is a web-based solution designed to modernize electoral management. By transitioning from manual paper-based registers to a centralized relational database, VIMS ensures high-speed data retrieval, eliminates redundancy (ghost voters), and provides structured mapping of family units (**"Gharanas"**) and polling station assignments.
 
-This project is developed as part of the **BS Software Engineering** curriculum at **IMSciences**.
+This project is developed as part of the **Database (Lab)** requirements at **IMSciences**.
 
 ---
 
@@ -19,7 +19,7 @@ This project is developed as part of the **BS Software Engineering** curriculum 
 
 ## Tech Stack
 *   **Backend:** Python 3.x, Django Framework
-*   **Database:** MySQL 8.0 (Relational Storage & Integrity)
+*   **Database:** MySQL 8.0
 *   **Frontend:** HTML5, CSS3, Bootstrap 5
 *   **Development Tools:** VS Code, MySQL Workbench
 
