@@ -1,0 +1,21 @@
+station_id,name,location_code,city,capacity
+1,Polling Station M-001,M-001,Mardan,300
+2,Polling Station N-002,N-002,Nowshera,400
+3,Polling Station S-003,S-003,Swat,400
+4,Polling Station M-004,M-004,Mardan,1000
+5,Polling Station M-005,M-005,Mansehra,300
+6,Polling Station H-006,H-006,Haripur,600
+7,Polling Station P-007,P-007,Peshawar,300
+8,Polling Station M-008,M-008,Mardan,400
+9,Polling Station S-009,S-009,Swat,750
+10,Polling Station H-010,H-010,Haripur,300
+11,Polling Station M-011,M-011,Mansehra,400
+12,Polling Station M-012,M-012,Mansehra,600
+13,Polling Station S-013,S-013,Swat,600
+14,Polling Station H-014,H-014,Haripur,500
+15,Polling Station P-015,P-015,Peshawar,400
+16,Polling Station K-016,K-016,Kohat,500
+17,Polling Station N-017,N-017,Nowshera,400
+18,Polling Station S-018,S-018,Swat,500
+19,Polling Station M-019,M-019,Mardan,300
+20,Polling Station K-020,K-020,Kohat,300
