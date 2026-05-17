@@ -50,6 +50,11 @@ The core of VIMS is its relational schema, designed to enforce entity and refere
 
 ---
 
+## Dataflow
+Data enters VIMS through two paths: (1) Administrator-operated CRUD forms for registering voters, families, and polling stations; (2) bulk import via CSV for initial population. The dependency order is fixed — Users and PollingStations and Families are populated first (no foreign key dependencies), then Voters (which references both Families and PollingStations), then AuditLogs (which references Users). Query results exit the system as voter search results, station-wise voter lists, family rosters, and admin audit reports.
+
+---
+
 ## Project Structure (Planned)
 ```text
 ├── vims_project/          # Django project settings
@@ -60,8 +65,3 @@ The core of VIMS is its relational schema, designed to enforce entity and refere
 │   └── static/            # CSS and Bootstrap assets
 ├── manage.py              # Django CLI
 └── requirements.txt       # Project dependencies
-
----
-
-## Dataflow
-Data enters VIMS through two paths: (1) Administrator-operated CRUD forms for registering voters, families, and polling stations; (2) bulk import via CSV for initial population. The dependency order is fixed — Users and PollingStations and Families are populated first (no foreign key dependencies), then Voters (which references both Families and PollingStations), then AuditLogs (which references Users). Query results exit the system as voter search results, station-wise voter lists, family rosters, and admin audit reports.
