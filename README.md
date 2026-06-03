@@ -2,7 +2,7 @@
 
 > A comprehensive Django-based web application for managing voter information, families, polling stations, and audit logs in a secure, role-based environment.
 
-## 🎯 Features
+##  Features
 
 - **User Authentication**: Secure login with session-based authentication
 - **Dashboard**: Real-time statistics and recent activity overview
@@ -14,7 +14,7 @@
 - **Advanced Search**: Filter voters by CNIC, name, family, or station
 - **Responsive UI**: Mobile-friendly interface with dark theme (Bootstrap 5)
 
-## 📋 Project Structure
+##  Project Structure
 
 ```
 digiVIMS/
@@ -56,7 +56,7 @@ digiVIMS/
     └── _detail_field.html       # Reusable field component
 ```
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Option 1: Automated Setup (Recommended)
 
@@ -115,13 +115,13 @@ python manage.py runserver
 http://127.0.0.1:8000/
 ```
 
-## 🔑 Login Credentials
+##  Login Credentials
 
 After setup, use:
 - **Username:** `admin`
 - **Password:** The one you set during admin user creation
 
-## 📊 Database Schema
+##  Database Schema
 
 The application integrates with an existing MySQL schema containing 5 tables:
 
@@ -135,7 +135,7 @@ The application integrates with an existing MySQL schema containing 5 tables:
 
 **Note:** All models have `managed=False` — Django does not create/alter/drop these tables.
 
-## 🔒 Security Features
+##  Security Features
 
 - ✅ CSRF protection on all forms
 - ✅ Password hashing (PBKDF2)
@@ -145,7 +145,7 @@ The application integrates with an existing MySQL schema containing 5 tables:
 - ✅ SQL injection prevention (ORM)
 - ✅ Secure cookies (HTTPOnly, SameSite)
 
-## 🛠 Configuration
+##  Configuration
 
 ### Environment Variables
 
@@ -172,7 +172,7 @@ All settings are in `vims_project/settings.py`:
 - Session timeout: 1 hour
 - Static files configuration
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 | Error | Solution |
 |-------|----------|
@@ -182,7 +182,7 @@ All settings are in `vims_project/settings.py`:
 | `TemplateDoesNotExist: voter_app/base.html` | Verify `TEMPLATES['DIRS']` includes `BASE_DIR / 'templates'` in settings.py |
 | `CSRF verification failed` | Ensure `{% csrf_token %}` is in all forms |
 
-## 📚 API Endpoints
+##  API Endpoints
 
 All endpoints require login. Admin operations are restricted.
 
@@ -220,7 +220,7 @@ All endpoints require login. Admin operations are restricted.
 ### Admin
 - `GET /audit/` → Audit logs (admin only)
 
-## 🎨 Design System
+##  Design System
 
 The application uses a sophisticated dark theme with:
 - **Primary:** Teal accent (#0EA87A)
@@ -229,7 +229,7 @@ The application uses a sophisticated dark theme with:
 - **Icons:** Bootstrap Icons
 - **Framework:** Bootstrap 5
 
-## 📈 Development
+##  Development
 
 ### Running Tests
 ```bash
@@ -247,7 +247,7 @@ python manage.py createsuperuser
 python manage.py collectstatic
 ```
 
-## 🚀 Production Deployment
+##  Production Deployment
 
 For production, update `vims_project/settings.py`:
 
@@ -270,7 +270,7 @@ pip install uwsgi
 uwsgi --http :8000 --wsgi-file vims_project/wsgi.py --master --processes 4 --threads 2
 ```
 
-## 📞 Support
+##  Support
 
 For issues or questions:
 1. Check `DEPLOYMENT.md` for setup troubleshooting
@@ -278,7 +278,7 @@ For issues or questions:
 3. Verify database connection in `.env`
 4. Check Django logs: `python manage.py runserver` output
 
-## 📄 License
+##  License
 
 Internal project for voter information management.
 
@@ -286,4 +286,4 @@ Internal project for voter information management.
 
 **Version:** 1.0  
 **Last Updated:** June 2026  
-**Status:** Ready for Deployment ✅
+**Status:** Ready for Deployment 
