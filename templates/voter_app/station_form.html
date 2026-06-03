@@ -1,0 +1,126 @@
+{% extends 'voter_app/base.html' %}
+{% block title %}{{ action }} Polling Station{% endblock %}
+{% block page_title %}{{ action }} Polling Station{% endblock %}
+
+{% block content %}
+<div style="max-width: 680px;">
+  <form method="post">
+    {% csrf_token %}
+    <div class="vims-card mb-3">
+      <div class="vims-card-header">
+        <span class="vims-card-title">Polling Station Information</span>
+      </div>
+      <div style="padding:24px;">
+        <div class="form-grid">
+          <div class="field-group">
+            <label class="field-label">Station Name</label>
+            <input type="text" name="name" class="vims-input"
+                   placeholder="e.g. Central High School"
+                   value="{{ form.name.value|default:'' }}" required/>
+            {% if form.name.errors %}<div class="field-error">{{ form.name.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="field-group">
+            <label class="field-label">Location Code</label>
+            <input type="text" name="location_code" class="vims-input"
+                   placeholder="e.g. KP-KOH-01"
+                   value="{{ form.location_code.value|default:'' }}" required/>
+            {% if form.location_code.errors %}<div class="field-error">{{ form.location_code.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="field-group">
+            <label class="field-label">City</label>
+            <input type="text" name="city" class="vims-input"
+                   placeholder="City name"
+                   value="{{ form.city.value|default:'' }}" required/>
+            {% if form.city.errors %}<div class="field-error">{{ form.city.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="field-group">
+            <label class="field-label">Capacity (max voters)</label>
+            <input type="number" name="capacity" class="vims-input" min="1"
+                   placeholder="500"
+                   value="{{ form.capacity.value|default:'' }}" required/>
+            {% if form.capacity.errors %}<div class="field-error">{{ form.capacity.errors.0 }}</div>{% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:12px; margin-top:24px;">
+      <button type="submit" class="btn-vims-primary" style="padding:10px 28px; border:none; cursor:pointer;">
+        <i class="bi bi-check-circle"></i> {{ action }} Station
+      </button>
+      <a href="{% url 'station_list' %}" class="btn-vims-secondary" style="text-decoration:none; display:inline-flex; align-items:center; padding:10px 28px;">
+        <i class="bi bi-x-circle"></i> Cancel
+      </a>
+    </div>
+  </form>
+</div>
+
+<style>
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .field-label {
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  
+  .vims-input, .vims-select {
+    background: var(--navy-light);
+    border: 1px solid var(--border);
+    color: var(--white);
+    padding: 10px 12px;
+    border-radius: 4px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+  }
+  
+  .vims-input:focus, .vims-select:focus {
+    outline: none;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 2px var(--teal-glow);
+  }
+  
+  .field-error {
+    color: var(--red);
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  
+  .btn-vims-primary, .btn-vims-secondary {
+    background: var(--teal);
+    color: var(--navy);
+    border-radius: 4px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-vims-primary:hover {
+    background: var(--teal-dim);
+    transform: translateY(-1px);
+  }
+  
+  .btn-vims-secondary {
+    background: var(--navy-light);
+    color: var(--white);
+    border: 1px solid var(--border);
+  }
+  
+  .btn-vims-secondary:hover {
+    background: var(--navy-mid);
+    color: var(--teal);
+  }
+</style>
+{% endblock %}

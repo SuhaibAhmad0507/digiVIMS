@@ -1,0 +1,58 @@
+{% extends 'voter_app/base.html' %}
+{% block title %}Families{% endblock %}
+{% block page_title %}Families (Gharanas){% endblock %}
+
+{% block topbar_actions %}
+{% if request.session.role == 'Administrator' %}
+<a href="{% url 'family_create' %}" class="btn-vims-primary">
+  <i class="bi bi-plus-lg"></i> Add Family
+</a>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<form method="get" style="margin-bottom:16px;">
+  <div class="search-bar">
+    <input type="text" name="q" class="vims-input" style="flex:1;"
+           placeholder="Search by head name or address…" value="{{ query }}"/>
+    <button type="submit" class="btn-vims-primary"><i class="bi bi-search"></i> Search</button>
+    {% if query %}<a href="{% url 'family_list' %}" class="btn-vims-ghost">Clear</a>{% endif %}
+  </div>
+</form>
+
+<div class="vims-card">
+  <table class="vims-table">
+    <thead>
+      <tr><th>ID</th><th>Head of Family</th><th>Address</th><th>Members</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for f in page %}
+      <tr>
+        <td class="mono">{{ f.family_id }}</td>
+        <td>
+          <a href="{% url 'family_detail' f.family_id %}"
+             style="color:var(--white); text-decoration:none; font-weight:500;">
+            {{ f.head_name }}
+          </a>
+        </td>
+        <td style="color:var(--muted); font-size:12px; max-width:260px;">{{ f.permanent_address|truncatechars:60 }}</td>
+        <td class="mono">{{ f.member_count }}</td>
+        <td>
+          <div style="display:flex; gap:6px;">
+            <a href="{% url 'family_detail' f.family_id %}" class="btn-vims-ghost" style="font-size:11px; padding:4px 10px;">
+              <i class="bi bi-eye"></i>
+            </a>
+            {% if request.session.role == 'Administrator' %}
+            <a href="{% url 'family_update' f.family_id %}" class="btn-vims-edit"><i class="bi bi-pencil"></i></a>
+            <a href="{% url 'family_delete' f.family_id %}" class="btn-vims-danger" style="font-size:12px; padding:4px 10px;"><i class="bi bi-trash"></i></a>
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5" style="text-align:center; padding:32px; color:var(--muted);">No families found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

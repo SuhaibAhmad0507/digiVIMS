@@ -1,0 +1,81 @@
+{% extends 'voter_app/base.html' %}
+{% block title %}{{ action }} Voter{% endblock %}
+{% block page_title %}{{ action }} Voter{% endblock %}
+
+{% block content %}
+<div style="max-width: 680px;">
+  <form method="post">
+    {% csrf_token %}
+    <div class="vims-card mb-3">
+      <div class="vims-card-header">
+        <span class="vims-card-title">Voter Information</span>
+      </div>
+      <div style="padding:24px;">
+        <div class="form-grid">
+          <div class="field-group">
+            <label class="field-label">CNIC</label>
+            <input type="text" name="cnic" class="vims-input"
+                   placeholder="e.g. 17301-1234567-1"
+                   value="{{ form.cnic.value|default:'' }}"/>
+            {% if form.cnic.errors %}<div class="field-error">{{ form.cnic.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="field-group">
+            <label class="field-label">Full Name</label>
+            <input type="text" name="full_name" class="vims-input"
+                   placeholder="Full name"
+                   value="{{ form.full_name.value|default:'' }}"/>
+            {% if form.full_name.errors %}<div class="field-error">{{ form.full_name.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="field-group">
+            <label class="field-label">Age</label>
+            <input type="number" name="age" class="vims-input" min="18" max="120"
+                   value="{{ form.age.value|default:'' }}"/>
+            {% if form.age.errors %}<div class="field-error">{{ form.age.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="field-group">
+            <label class="field-label">Gender</label>
+            <select name="gender" class="vims-select" style="width:100%;">
+              <option value="">— Select —</option>
+              <option value="Male"   {% if form.gender.value == 'Male' %}selected{% endif %}>Male</option>
+              <option value="Female" {% if form.gender.value == 'Female' %}selected{% endif %}>Female</option>
+            </select>
+            {% if form.gender.errors %}<div class="field-error">{{ form.gender.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="field-group">
+            <label class="field-label">Family (Gharana)</label>
+            <select name="family" class="vims-select" style="width:100%;">
+              <option value="">— None —</option>
+              {% for f in form.family.field.queryset %}
+              <option value="{{ f.family_id }}"
+                {% if form.family.value|stringformat:"s" == f.family_id|stringformat:"s" %}selected{% endif %}>
+                #{{ f.family_id }} — {{ f.head_name }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Polling Station</label>
+            <select name="station" class="vims-select" style="width:100%;">
+              <option value="">— None —</option>
+              {% for s in form.station.field.queryset %}
+              <option value="{{ s.station_id }}"
+                {% if form.station.value|stringformat:"s" == s.station_id|stringformat:"s" %}selected{% endif %}>
+                {{ s.name }} — {{ s.city }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px;">
+      <button type="submit" class="btn-vims-primary">
+        <i class="bi bi-check-lg"></i> {{ action }} Voter
+      </button>
+      <a href="{% if voter %}{% url 'voter_detail' voter.voter_id %}{% else %}{% url 'voter_list' %}{% endif %}"
+         class="btn-vims-ghost">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,173 @@
+{% extends 'voter_app/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block page_subtitle %}System overview &amp; statistics{% endblock %}
+
+{% block content %}
+
+<!-- ── Stat Tiles ──────────────────────────────── -->
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="stat-tile">
+      <div class="stat-label">Total Voters</div>
+      <div class="stat-value">{{ total_voters }}</div>
+      <i class="bi bi-person-lines-fill stat-icon"></i>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-tile amber">
+      <div class="stat-label">Families (Gharanas)</div>
+      <div class="stat-value">{{ total_families }}</div>
+      <i class="bi bi-house-door stat-icon"></i>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-tile red">
+      <div class="stat-label">Polling Stations</div>
+      <div class="stat-value">{{ total_stations }}</div>
+      <i class="bi bi-geo-alt stat-icon"></i>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-tile purple">
+      <div class="stat-label">Female Voters</div>
+      <div class="stat-value">{{ female_count }}</div>
+      <i class="bi bi-gender-female stat-icon"></i>
+    </div>
+  </div>
+</div>
+
+<!-- ── Gender Split + Top Stations ───────────────── -->
+<div class="row g-3 mb-4">
+
+  <!-- Gender Distribution -->
+  <div class="col-md-4">
+    <div class="vims-card h-100">
+      <div class="vims-card-header">
+        <span class="vims-card-title">Gender Distribution</span>
+      </div>
+      <div style="padding: 24px;">
+        {% if total_voters %}
+          {% with male_pct=male_count|floatformat:0 %}
+          <div style="margin-bottom: 20px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+              <span style="font-size:12px; color:#5DADE2;">
+                <i class="bi bi-gender-male"></i> Male
+              </span>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#5DADE2;">
+                {{ male_count }}
+              </span>
+            </div>
+            <div class="vims-progress-bg">
+              <div class="vims-progress-fill"
+                   style="width:{% widthratio male_count total_voters 100 %}%; background:#5DADE2;"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+              <span style="font-size:12px; color:#E88080;">
+                <i class="bi bi-gender-female"></i> Female
+              </span>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#E88080;">
+                {{ female_count }}
+              </span>
+            </div>
+            <div class="vims-progress-bg">
+              <div class="vims-progress-fill"
+                   style="width:{% widthratio female_count total_voters 100 %}%; background:#E88080;"></div>
+            </div>
+          </div>
+          {% endwith %}
+        {% else %}
+          <p style="color:var(--muted); font-size:13px;">No voter data yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Stations -->
+  <div class="col-md-8">
+    <div class="vims-card h-100">
+      <div class="vims-card-header">
+        <span class="vims-card-title">Top Polling Stations by Voters</span>
+        <a href="{% url 'station_list' %}" class="btn-vims-ghost" style="font-size:11px; padding:5px 10px;">
+          View All
+        </a>
+      </div>
+      <table class="vims-table">
+        <thead>
+          <tr>
+            <th>Station</th>
+            <th>City</th>
+            <th>Capacity</th>
+            <th>Registered</th>
+            <th>Fill</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in top_stations %}
+          <tr>
+            <td><a href="{% url 'station_detail' s.station_id %}"
+                   style="color:var(--teal); text-decoration:none;">{{ s.name }}</a></td>
+            <td style="color:var(--muted);">{{ s.city }}</td>
+            <td class="mono">{{ s.capacity }}</td>
+            <td class="mono">{{ s.voter_count }}</td>
+            <td style="min-width:100px;">
+              {% if s.capacity %}
+                {% with pct=s.voter_count|floatformat:0 %}
+                <div class="vims-progress-bg" style="width:100px;">
+                  <div class="vims-progress-fill
+                    {% if s.voter_count > s.capacity %}danger
+                    {% elif s.voter_count > s.capacity|floatformat:0 %}warn{% endif %}"
+                    style="width:{% widthratio s.voter_count s.capacity 100 %}%;"></div>
+                </div>
+                {% endwith %}
+              {% else %}<span style="color:var(--muted); font-size:11px;">N/A</span>{% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" style="color:var(--muted); text-align:center; padding:20px;">
+            No station data.
+          </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Recent Audit Logs ──────────────────────────── -->
+{% if request.session.role == 'Administrator' %}
+<div class="vims-card">
+  <div class="vims-card-header">
+    <span class="vims-card-title">Recent Activity</span>
+    <a href="{% url 'audit_logs' %}" class="btn-vims-ghost" style="font-size:11px; padding:5px 10px;">
+      Full Log
+    </a>
+  </div>
+  <table class="vims-table">
+    <thead>
+      <tr><th>Timestamp</th><th>User</th><th>Action</th><th>Table</th><th>Record ID</th></tr>
+    </thead>
+    <tbody>
+      {% for log in recent_logs %}
+      <tr>
+        <td class="mono">{{ log.timestamp|date:"d M Y H:i" }}</td>
+        <td>{{ log.user.username|default:"—" }}</td>
+        <td>
+          <span class="badge-action badge-{{ log.action|lower }}">{{ log.action }}</span>
+        </td>
+        <td style="color:var(--muted);">{{ log.target_table }}</td>
+        <td class="mono">{{ log.target_id }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5" style="color:var(--muted); text-align:center; padding:20px;">No logs yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% endblock %}

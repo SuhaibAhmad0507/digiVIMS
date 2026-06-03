@@ -1,0 +1,85 @@
+{% extends 'voter_app/base.html' %}
+{% block title %}{{ voter.full_name }}{% endblock %}
+{% block page_title %}Voter Detail{% endblock %}
+{% block page_subtitle %}{{ voter.cnic }}{% endblock %}
+
+{% block topbar_actions %}
+{% if request.session.role == 'Administrator' %}
+<div style="display:flex; gap:8px;">
+  <a href="{% url 'voter_update' voter.voter_id %}" class="btn-vims-edit">
+    <i class="bi bi-pencil"></i> Edit
+  </a>
+  <a href="{% url 'voter_delete' voter.voter_id %}" class="btn-vims-danger">
+    <i class="bi bi-trash"></i> Delete
+  </a>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+  <div class="col-md-7">
+    <div class="vims-card">
+      <div class="vims-card-header">
+        <span class="vims-card-title">Personal Information</span>
+        <span class="badge-gender badge-{{ voter.gender|lower }}">{{ voter.gender }}</span>
+      </div>
+      <div style="padding: 24px; display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+        {% include 'voter_app/_detail_field.html' with label="Full Name" value=voter.full_name %}
+        {% include 'voter_app/_detail_field.html' with label="CNIC" value=voter.cnic mono=True %}
+        {% include 'voter_app/_detail_field.html' with label="Age" value=voter.age %}
+        {% include 'voter_app/_detail_field.html' with label="Gender" value=voter.gender %}
+        <div>
+          <div style="font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Family (Gharana)</div>
+          {% if voter.family %}
+          <a href="{% url 'family_detail' voter.family.family_id %}" style="color:var(--teal); text-decoration:none; font-size:14px;">
+            {{ voter.family.head_name }} <span style="color:var(--muted);">(#{{ voter.family.family_id }})</span>
+          </a>
+          {% else %}<span style="color:var(--muted);">Not assigned</span>{% endif %}
+        </div>
+        <div>
+          <div style="font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Polling Station</div>
+          {% if voter.station %}
+          <a href="{% url 'station_detail' voter.station.station_id %}" style="color:var(--teal); text-decoration:none; font-size:14px;">
+            {{ voter.station.name }}
+          </a>
+          {% else %}<span style="color:var(--muted);">Not assigned</span>{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-5">
+    <div class="vims-card">
+      <div class="vims-card-header">
+        <span class="vims-card-title">Family Members</span>
+        <span style="font-size:12px; color:var(--muted);">Same Gharana</span>
+      </div>
+      {% if siblings %}
+      <table class="vims-table">
+        <thead><tr><th>Name</th><th>CNIC</th><th>Age</th></tr></thead>
+        <tbody>
+          {% for s in siblings %}
+          <tr>
+            <td><a href="{% url 'voter_detail' s.voter_id %}" style="color:var(--white); text-decoration:none;">{{ s.full_name }}</a></td>
+            <td class="mono">{{ s.cnic }}</td>
+            <td class="mono">{{ s.age }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div style="padding:24px; color:var(--muted); font-size:13px; text-align:center;">
+        No other members in this family.
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:16px;">
+  <a href="{% url 'voter_list' %}" class="btn-vims-ghost">
+    <i class="bi bi-arrow-left"></i> Back to Voters
+  </a>
+</div>
+{% endblock %}

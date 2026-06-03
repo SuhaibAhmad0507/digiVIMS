@@ -1,0 +1,30 @@
+{% extends 'voter_app/base.html' %}
+{% block title %}Delete {{ object_type }}{% endblock %}
+{% block page_title %}Confirm Delete{% endblock %}
+
+{% block content %}
+<div style="max-width:480px;">
+  <div class="vims-card">
+    <div class="vims-card-header">
+      <span class="vims-card-title" style="color:var(--red);">
+        <i class="bi bi-exclamation-triangle"></i> Delete {{ object_type }}
+      </span>
+    </div>
+    <div style="padding:28px;">
+      <p style="color:var(--white); margin-bottom:8px; font-size:15px;">
+        Are you sure you want to delete <strong>{{ object }}</strong>?
+      </p>
+      <p style="color:var(--muted); font-size:13px; margin-bottom:24px;">
+        This action cannot be undone. Associated records may be affected.
+      </p>
+      <form method="post" style="display:flex; gap:10px;">
+        {% csrf_token %}
+        <button type="submit" class="btn-vims-danger" style="padding:10px 20px;">
+          <i class="bi bi-trash"></i> Yes, Delete
+        </button>
+        <a href="{% url cancel_url %}" class="btn-vims-ghost">Cancel</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

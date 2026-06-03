@@ -1,0 +1,62 @@
+{% extends 'voter_app/base.html' %}
+{% block title %}Polling Stations{% endblock %}
+{% block page_title %}Polling Stations{% endblock %}
+
+{% block topbar_actions %}
+{% if request.session.role == 'Administrator' %}
+<a href="{% url 'station_create' %}" class="btn-vims-primary">
+  <i class="bi bi-plus-lg"></i> Add Station
+</a>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="vims-card">
+  <table class="vims-table">
+    <thead>
+      <tr><th>Code</th><th>Station Name</th><th>City</th><th>Capacity</th><th>Registered</th><th>Fill %</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for s in stations %}
+      <tr>
+        <td class="mono">{{ s.location_code }}</td>
+        <td>
+          <a href="{% url 'station_detail' s.station_id %}"
+             style="color:var(--white); text-decoration:none; font-weight:500;">{{ s.name }}</a>
+        </td>
+        <td style="color:var(--muted);">{{ s.city }}</td>
+        <td class="mono">{{ s.capacity }}</td>
+        <td class="mono">{{ s.voter_count }}</td>
+        <td style="min-width:120px;">
+          {% if s.capacity %}
+          {% with pct=s.voter_count %}
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div class="vims-progress-bg" style="width:80px;">
+              <div class="vims-progress-fill
+                {% if s.voter_count > s.capacity %}danger{% endif %}"
+                style="width:{% widthratio s.voter_count s.capacity 100 %}%;"></div>
+            </div>
+            <span class="mono" style="font-size:11px; color:var(--muted);">
+              {% widthratio s.voter_count s.capacity 100 %}%
+            </span>
+          </div>
+          {% endwith %}
+          {% else %}—{% endif %}
+        </td>
+        <td>
+          <div style="display:flex; gap:6px;">
+            <a href="{% url 'station_detail' s.station_id %}" class="btn-vims-ghost" style="font-size:11px; padding:4px 10px;"><i class="bi bi-eye"></i></a>
+            {% if request.session.role == 'Administrator' %}
+            <a href="{% url 'station_update' s.station_id %}" class="btn-vims-edit"><i class="bi bi-pencil"></i></a>
+            <a href="{% url 'station_delete' s.station_id %}" class="btn-vims-danger" style="font-size:12px; padding:4px 10px;"><i class="bi bi-trash"></i></a>
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" style="text-align:center; padding:32px; color:var(--muted);">No stations found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

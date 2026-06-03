@@ -1,0 +1,125 @@
+{% extends 'voter_app/base.html' %}
+{% block title %}{{ station.name }}{% endblock %}
+{% block page_title %}Polling Station Detail{% endblock %}
+{% block page_subtitle %}{{ station.city }}{% endblock %}
+
+{% block topbar_actions %}
+{% if request.session.role == 'Administrator' %}
+<div style="display:flex; gap:8px;">
+  <a href="{% url 'station_update' station.station_id %}" class="btn-vims-edit">
+    <i class="bi bi-pencil"></i> Edit
+  </a>
+  <a href="{% url 'station_delete' station.station_id %}" class="btn-vims-danger">
+    <i class="bi bi-trash"></i> Delete
+  </a>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+  <div class="col-md-5">
+    <div class="vims-card">
+      <div class="vims-card-header">
+        <span class="vims-card-title">Station Information</span>
+      </div>
+      <div style="padding: 24px; display:grid; grid-template-columns:1fr; gap:24px;">
+        {% include 'voter_app/_detail_field.html' with label="Station Name" value=station.name %}
+        {% include 'voter_app/_detail_field.html' with label="Location Code" value=station.location_code mono=True %}
+        {% include 'voter_app/_detail_field.html' with label="City" value=station.city %}
+        {% include 'voter_app/_detail_field.html' with label="Capacity" value=station.capacity %}
+      </div>
+    </div>
+
+    <div class="vims-card" style="margin-top:24px; background:linear-gradient(135deg, var(--navy-light), var(--navy-mid));">
+      <div style="padding:24px; text-align:center;">
+        <div style="font-size:32px; font-weight:700; color:var(--teal); margin-bottom:8px;">{{ voters|length }}</div>
+        <div style="color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:1px;">Registered Voters</div>
+        <div style="margin-top:16px; color:var(--white); font-size:13px;">
+          Capacity: <strong>{{ capacity_pct }}%</strong> filled
+        </div>
+        <div style="width:100%; height:6px; background:var(--navy); border-radius:3px; margin-top:12px; overflow:hidden;">
+          <div style="width:{{ capacity_pct }}%; height:100%; background:var(--teal); transition:width 0.3s ease;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-7">
+    <div class="vims-card">
+      <div class="vims-card-header">
+        <span class="vims-card-title">Registered Voters</span>
+        <span style="color:var(--muted); font-size:12px;">{{ voters|length }} voter{{ voters|length|pluralize }}</span>
+      </div>
+      {% if voters %}
+      <div style="overflow-x:auto; max-height:600px; overflow-y:auto;">
+        <table class="vims-table">
+          <thead style="position:sticky; top:0; background:var(--navy-mid); z-index:10;">
+            <tr style="border-bottom:1px solid var(--border);">
+              <th>CNIC</th>
+              <th>Name</th>
+              <th>Family</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for voter in voters %}
+            <tr style="border-bottom:1px solid var(--border); transition:background 0.2s ease;">
+              <td style="font-family:var(--font-mono); font-size:12px; color:var(--teal);">{{ voter.cnic }}</td>
+              <td>{{ voter.full_name }}</td>
+              <td>
+                {% if voter.family %}
+                <a href="{% url 'family_detail' voter.family.family_id %}" style="color:var(--teal); text-decoration:none; font-size:12px;">
+                  {{ voter.family.head_name }}
+                </a>
+                {% else %}<span style="color:var(--muted);">—</span>{% endif %}
+              </td>
+              <td style="text-align:right;">
+                <a href="{% url 'voter_detail' voter.voter_id %}" style="color:var(--teal); text-decoration:none; font-size:12px;">View</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div style="padding:24px; text-align:center; color:var(--muted);">
+        <p>No voters registered at this station yet.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:24px; text-align:center;">
+  <a href="{% url 'station_list' %}" class="btn-vims-secondary" style="text-decoration:none; display:inline-block; padding:10px 20px;">
+    <i class="bi bi-arrow-left"></i> Back to Stations
+  </a>
+</div>
+{% endblock %}
+
+<style>
+  .vims-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  
+  .vims-table th {
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+  
+  .vims-table td {
+    padding: 12px;
+  }
+  
+  .vims-table tbody tr:hover {
+    background: var(--row-hover);
+  }
+</style>

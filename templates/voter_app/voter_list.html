@@ -1,0 +1,145 @@
+{% extends 'voter_app/base.html' %}
+
+{% block title %}Voters{% endblock %}
+{% block page_title %}Voters{% endblock %}
+{% block page_subtitle %}{{ total }} record{{ total|pluralize }} found{% endblock %}
+
+{% block topbar_actions %}
+  {% if request.session.role == 'Administrator' %}
+  <a href="{% url 'voter_create' %}" class="btn-vims-primary">
+    <i class="bi bi-plus-lg"></i> Add Voter
+  </a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<!-- ── Search / Filter Bar ──────────────────────── -->
+<form method="get" class="vims-card mb-4" style="padding: 16px 20px;">
+  <div class="search-bar flex-wrap gap-2">
+    <input type="text" name="q" class="vims-input" style="flex: 1; min-width: 220px;"
+           placeholder="Search by CNIC, Name, or Family ID…" value="{{ query }}"/>
+    <select name="gender" class="vims-select">
+      <option value="">All Genders</option>
+      <option value="Male"   {% if gender_f == 'Male' %}selected{% endif %}>Male</option>
+      <option value="Female" {% if gender_f == 'Female' %}selected{% endif %}>Female</option>
+    </select>
+    <select name="station" class="vims-select">
+      <option value="">All Stations</option>
+      {% for s in stations %}
+      <option value="{{ s.station_id }}" {% if station_f == s.station_id|stringformat:"s" %}selected{% endif %}>
+        {{ s.name }}
+      </option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn-vims-primary">
+      <i class="bi bi-search"></i> Search
+    </button>
+    {% if query or gender_f or station_f %}
+    <a href="{% url 'voter_list' %}" class="btn-vims-ghost">Clear</a>
+    {% endif %}
+  </div>
+</form>
+
+<!-- ── Voter Table ───────────────────────────────── -->
+<div class="vims-card">
+  <table class="vims-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>CNIC</th>
+        <th>Full Name</th>
+        <th>Age</th>
+        <th>Gender</th>
+        <th>Family</th>
+        <th>Station</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for voter in page %}
+      <tr>
+        <td class="mono">{{ voter.voter_id }}</td>
+        <td class="mono">{{ voter.cnic }}</td>
+        <td>
+          <a href="{% url 'voter_detail' voter.voter_id %}"
+             style="color:var(--white); text-decoration:none; font-weight:500;">
+            {{ voter.full_name }}
+          </a>
+        </td>
+        <td class="mono">{{ voter.age }}</td>
+        <td>
+          <span class="badge-gender badge-{{ voter.gender|lower }}">{{ voter.gender }}</span>
+        </td>
+        <td>
+          {% if voter.family %}
+            <a href="{% url 'family_detail' voter.family.family_id %}"
+               style="color:var(--teal); text-decoration:none; font-size:12px;">
+              #{{ voter.family.family_id }} {{ voter.family.head_name|truncatechars:20 }}
+            </a>
+          {% else %}<span style="color:var(--muted);">—</span>{% endif %}
+        </td>
+        <td style="font-size:12px; color:var(--muted);">
+          {{ voter.station.name|default:"—"|truncatechars:25 }}
+        </td>
+        <td>
+          <div style="display:flex; gap:6px;">
+            <a href="{% url 'voter_detail' voter.voter_id %}" class="btn-vims-ghost"
+               style="font-size:11px; padding:4px 10px;">
+              <i class="bi bi-eye"></i>
+            </a>
+            {% if request.session.role == 'Administrator' %}
+            <a href="{% url 'voter_update' voter.voter_id %}" class="btn-vims-edit">
+              <i class="bi bi-pencil"></i>
+            </a>
+            <a href="{% url 'voter_delete' voter.voter_id %}" class="btn-vims-danger"
+               style="font-size:12px; padding:4px 10px;">
+              <i class="bi bi-trash"></i>
+            </a>
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="8" style="text-align:center; padding:40px; color:var(--muted);">
+          <i class="bi bi-search" style="font-size:24px; display:block; margin-bottom:8px;"></i>
+          No voters found matching your search.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Pagination -->
+  {% if page.has_other_pages %}
+  <div style="padding: 16px 20px; border-top: 1px solid var(--border);">
+    <div class="pagination-wrap">
+      {% if page.has_previous %}
+      <a href="?q={{ query }}&gender={{ gender_f }}&station={{ station_f }}&page={{ page.previous_page_number }}"
+         class="page-btn"><i class="bi bi-chevron-left"></i></a>
+      {% endif %}
+
+      {% for num in page.paginator.page_range %}
+        {% if page.number == num %}
+        <span class="page-btn active">{{ num }}</span>
+        {% elif num > page.number|add:'-3' and num < page.number|add:'3' %}
+        <a href="?q={{ query }}&gender={{ gender_f }}&station={{ station_f }}&page={{ num }}"
+           class="page-btn">{{ num }}</a>
+        {% endif %}
+      {% endfor %}
+
+      {% if page.has_next %}
+      <a href="?q={{ query }}&gender={{ gender_f }}&station={{ station_f }}&page={{ page.next_page_number }}"
+         class="page-btn"><i class="bi bi-chevron-right"></i></a>
+      {% endif %}
+
+      <span style="color:var(--muted); font-size:12px; margin-left:8px;">
+        Page {{ page.number }} of {{ page.paginator.num_pages }}
+      </span>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}
